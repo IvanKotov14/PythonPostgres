@@ -12,6 +12,7 @@ from expencion import list_job_tittle
 from expencion import generate_random_email
 from expencion import list_img
 from expencion import rasxodnye_materialy
+from expencion import akcii_dict
 from name import list_name
 import json
 
@@ -38,7 +39,6 @@ try:
             random_phone_number = generate_random_phone_number()
             item_tuple = (lower_date_boundary, random_address, random_phone_number)
             cursor.execute(insert_query, item_tuple)
-            print("1 элемент успешно добавлен")
 
             for x in range(2):
                 insert_masters_query = """INSERT INTO masters(create_date, date_of_birth, name, phone, email, job_title, salon_id)
@@ -53,31 +53,30 @@ try:
                     generate_random_date(random_date_of_birth), random_date_of_birth, random_name, random_phone_number,
                     random_email,
                     random.choice(list_job_tittle), random_number))
-                print("5 элемент успешно добавлен")
 
         cursor.execute("SELECT id, create_date from masters")
         masters_data = cursor.fetchall()
         list_masters_id = []
         list_create_date_clients = []
 
-    for x in range(100):
-        for item in masters_data:
-            masters_id = item[0]
-            list_masters_id.append(masters_id)
-            create_date = item[1]
+        for x in range(2):
+            for item in masters_data:
+                masters_id = item[0]
+                list_masters_id.append(masters_id)
+                create_date = item[1]
 
-            random_hour = random.randint(9, 21)
-            random_minute = random.randint(0, 59)
-            create_datetime = datetime.combine(create_date, time(random_hour, random_minute))
+                random_hour = random.randint(9, 21)
+                random_minute = random.randint(0, 59)
+                create_datetime = datetime.combine(create_date, time(random_hour, random_minute))
 
-            insert_clients_query = """INSERT INTO clients(create_date, name, phone, email, masters_id)
-                                                    VALUES (%s, %s, %s, %s, %s)"""
-            random_email = generate_random_email()
-            random_phone_number = generate_random_phone_number()
-            random_name = random.choice(list_name[0].split('\n'))
-            cursor.execute(insert_clients_query,
-                           (create_datetime, random_name,
-                            random_phone_number, random_email, random.choice(list_masters_id)))
+                insert_clients_query = """INSERT INTO clients(create_date, name, phone, email, masters_id)
+                                                        VALUES (%s, %s, %s, %s, %s)"""
+                random_email = generate_random_email()
+                random_phone_number = generate_random_phone_number()
+                random_name = random.choice(list_name[0].split('\n'))
+                cursor.execute(insert_clients_query,
+                               (create_datetime, random_name,
+                                random_phone_number, random_email, random.choice(list_masters_id)))
 
         cursor.execute("SELECT masters_id, create_date from clients")
         clients_data = cursor.fetchall()
@@ -88,11 +87,11 @@ try:
             list_masters_from_clients_id.append(masters_id_from_clients)
             create_date = item[1]
 
-            insert_shedule_query = """INSERT INTO shedule(day, hours_worked, masters_id)
-                                                                    VALUES (%s, %s, %s)"""
-            random_hour_work = random.randint(3, 12)
-            cursor.execute(insert_shedule_query,
-                           (create_date, random_hour_work, random.choice(list_masters_from_clients_id)))
+        insert_shedule_query = """INSERT INTO shedule(day, hours_worked, masters_id)
+                                                                VALUES (%s, %s, %s)"""
+        random_hour_work = random.randint(3, 12)
+        cursor.execute(insert_shedule_query,
+                       (create_date, random_hour_work, random.choice(list_masters_from_clients_id)))
 
         for item in masters_data:
             masters_id_for_portfolio = item[0]
